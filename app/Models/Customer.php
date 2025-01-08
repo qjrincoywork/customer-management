@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\{SortOrder, SortTarget};
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 
@@ -32,6 +34,19 @@ class Customer extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    /**
+     * Define an accessor for the 'created_at' attribute.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     *   The accessor that formats the 'created_at' timestamp to 'M d Y g:iA'.
+     */
+    protected function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Carbon::parse($value)->format('M d Y g:iA'),
+        );
+    }
 
     /**
      * Retrieves a paginated list of customers based on the provided filter parameters.

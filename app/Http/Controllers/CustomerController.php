@@ -53,6 +53,17 @@ class CustomerController extends Controller
         return response()->json(['message' => __('Customer Created.')], Response::HTTP_OK);
     }
 
+    /**
+     * Display the specified customer.
+     *
+     * @param int $id The ID of the customer to retrieve.
+     * @return JsonResponse A JSON response containing the customer data.
+     */
+    public function show(int $id): JsonResponse
+    {
+        return response()->json($this->customer->findOrFail($id));
+    }
+
     public function update(Request $request, Customer $customer)
     {
         //
