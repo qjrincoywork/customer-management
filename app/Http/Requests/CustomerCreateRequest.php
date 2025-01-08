@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\{SortOrder, SortTarget};
+use App\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CustomerListRequest extends FormRequest
+class CustomerCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,33 +25,25 @@ class CustomerListRequest extends FormRequest
     {
         return [
             'first_name' => [
-                'nullable',
+                'required',
                 'string',
                 'max:255'
             ],
             'last_name' => [
-                'nullable',
+                'required',
                 'string',
                 'max:255'
             ],
             'contact_number' => [
-                'nullable',
+                'required',
                 'string',
                 'max:100'
             ],
-            'sort_target' => [
-                'nullable',
+            'email' => [
+                'required',
                 'string',
-                Rule::in(SortTarget::getValues())
-            ],
-            'sort_order' => [
-                'nullable',
-                'string',
-                Rule::in(SortOrder::getValues())
-            ],
-            'per_page' => [
-                'nullable',
-                'integer'
+                Rule::unique(Customer::class, 'email'),
+                'max:100'
             ],
         ];
     }

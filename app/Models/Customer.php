@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\SortOrder;
+use App\Enums\{SortOrder, SortTarget};
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\{Model, SoftDeletes};
@@ -21,6 +21,16 @@ class Customer extends Model
         'last_name',
         'email',
         'contact_number',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'updated_at',
+        'deleted_at',
     ];
 
     /**
@@ -52,10 +62,30 @@ class Customer extends Model
                 $query->where('contact_number', $params['contact_number']);
             })
             ->orderBy(
-                $params['sort_order'] ?? SortOrder::DESC
+                $params['sort_target'] ?? SortTarget::DATE_CREATED,
+                $params['sort_order'] ?? SortOrder::DESC,
             )
             ->paginate($params['per_page'] ?? config('customers.default_limit'));
 
         return $customers;
+    }
+
+    /**
+     * Saves a customer record. If an 'id' is provided in the data array,
+     * it updates the existing customer record with that ID. Otherwise,
+     * it creates a new customer record.
+     *
+     * @param array $data An associative array containing customer data,
+     *                    which may include an 'id' for updating an existing record.
+     *
+     * @return void
+     */
+    public function saveCustomer(array $data): void
+    {
+        if (isset($data['id'])) {
+            $this->find($data['id'])->update($data);
+        } else {
+            $this->create($data);
+        }
     }
 }
