@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{CustomerCreateRequest, CustomerListRequest, CustomerUpdateRequest};
+use App\Http\Requests\{CustomerCreateRequest, CustomerDeleteRequest, CustomerListRequest, CustomerUpdateRequest};
 use App\Models\Customer;
 use Illuminate\Http\{JsonResponse, Request};
 use Symfony\Component\HttpFoundation\Response;
@@ -77,8 +77,16 @@ class CustomerController extends Controller
         return response()->json(['message' => __('Customer Updated.')], Response::HTTP_OK);
     }
 
-    public function destroy(Customer $customer)
+    /**
+     * Delete a customer record.
+     *
+     * @param CustomerDeleteRequest $request The request containing the customer ID to delete.
+     * @return JsonResponse A JSON response indicating the success of the deletion.
+     */
+    public function destroy(CustomerDeleteRequest $request): JsonResponse
     {
-        //
+        $this->customer->find($request['id'])->delete();
+
+        return response()->json(['message' => __('Customer Deleted.')], Response::HTTP_OK);
     }
 }

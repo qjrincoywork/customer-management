@@ -6,7 +6,7 @@ use App\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CustomerCreateRequest extends FormRequest
+class CustomerDeleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,26 +24,10 @@ class CustomerCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => [
+            'id' => [
                 'required',
-                'string',
-                'max:255'
-            ],
-            'last_name' => [
-                'required',
-                'string',
-                'max:255'
-            ],
-            'contact_number' => [
-                'required',
-                'string',
-                'max:100'
-            ],
-            'email' => [
-                'required',
-                'string',
-                Rule::unique(Customer::class, 'email')->whereNull('deleted_at'),
-                'max:100'
+                'integer',
+                Rule::exists(Customer::class, 'id')->whereNull('deleted_at')
             ],
         ];
     }
